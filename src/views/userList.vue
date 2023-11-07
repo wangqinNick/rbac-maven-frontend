@@ -436,8 +436,10 @@ export default {
             email: this.addUser.email,
             password: this.addUser.password,
             remark: this.addUser.remark,
-            roleIds: JSON.stringify(this.addUser.roleIds),
+            roleIds: this.addUser.roleIds
+            // roleIds: JSON.stringify(this.addUser.roleIds),
           };
+          console.log(params);
           axios.post(url, params).then((response) => {
             console.log(response.data);
             if (response.data) {
@@ -509,6 +511,27 @@ export default {
       })
         .then(() => {
           //书写向后台发送请求的代码
+          let url = "/user/delete";
+          let params = {
+            id: row.id,
+            username: row.username,
+            email: row.email,
+            password: row.password,
+            remark: row.remark,
+            roleIds: row.roleIds,
+          };
+          console.log(params);
+          axios.post(url, params).then((response) => {
+            if(response.data) {
+              this.$message({
+                showClose: true,
+                message: response.data.message,
+                type: "success",
+              });
+              this.getUserList(); // 重新拉取用户列表
+            }
+
+          });
         })
         .catch(() => {
           this.$message.info("已取消操作!");
