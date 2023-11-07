@@ -143,7 +143,7 @@
           </el-pagination>
         </div>
       </div>
-      
+
       <!--TODO: 新增用户弹层
                    :visible.sync 是否显示 (dialogFormVisible=true 显示, =false隐藏)
             -->
@@ -341,53 +341,32 @@ export default {
     this.getRoleList();
   },
   methods: {
-    open() {
-      this.$message("这是一条消息提示");
-    },
-    open2() {
-      this.$message({
-        message: "用户添加成功!",
-        type: "success",
-      });
-    },
-
-    open3() {
-      this.$message({
-        message: "警告哦，这是一条警告消息",
-        type: "warning",
-      });
-    },
-
-    open4() {
-      this.$message.error("错了哦，这是一条错误消息");
-    },
     getUserList() {
-        // 向后台发送请求, 请求用户列表
-        let url = "/user/pagingQuery";
-        // 参数: 查询页码, 每页条数
-        let params = {
-            currentPage: this.pagination.pageNum,
-            pageSize: this.pagination.pageSize
-        };
+      // 向后台发送请求, 请求用户列表
+      let url = "/user/pagingQuery";
+      // 参数: 查询页码, 每页条数
+      let params = {
+        currentPage: this.pagination.pageNum,
+        pageSize: this.pagination.pageSize,
+      };
 
-        axios.post(url, params).then(response=>{
-            if(response.data.flag) {
-                // 查询成功
-                // 赋值给userList
-                this.userList = response.data.result.rows;
-                this.pagination.total = response.data.result.total;
-
-            }
-        });
-        // 1. 将后端响应数据放到userList
-        // 2. 将后台查询的用户表的总记录数的值, 赋给数据模型中的pagination.total
-        //     pagination: {
-        //     total: 0, //总条数
-        //     pageNum: 1, // //当前页
-        //     pageSize: 5, //每页显示条数
-        //   },
-
-      
+      axios.post(url, params).then((response) => {
+        if (response.data.flag) {
+          // 查询成功
+          // 赋值给userList
+          this.userList = response.data.result.rows;
+          this.pagination.total = response.data.result.total;
+        } else {
+          this.$message.error(response.data.message);
+        }
+      });
+      // 1. 将后端响应数据放到userList
+      // 2. 将后台查询的用户表的总记录数的值, 赋给数据模型中的pagination.total
+      //     pagination: {
+      //     total: 0, //总条数
+      //     pageNum: 1, // //当前页
+      //     pageSize: 5, //每页显示条数
+      //   },
     },
     //TODO: 查询角色表
     getRoleList() {
@@ -462,9 +441,13 @@ export default {
           axios.post(url, params).then((response) => {
             console.log(response.data);
             if (response.data) {
-              console.log("添加成功!");
-              this.open2(); // 显示成功信息
+              this.$message({
+                showClose: true,
+                message: response.data.message,
+                type: "success",
+              });
               this.dialogFormVisible = false; // 添加用户窗口消失
+              this.getUserList(); // 重新拉取用户列表
             }
           });
         }
