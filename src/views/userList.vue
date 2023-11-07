@@ -325,7 +325,7 @@ export default {
           {
             type: "email",
             message: "请输入正确的邮箱地址",
-            trigger: ["blur", "change"],
+            trigger: ["blur"],
           },
         ],
         password: [{ required: true, message: "请填写", trigger: "blur" }],
@@ -371,22 +371,15 @@ export default {
     //TODO: 查询角色表
     getRoleList() {
       //以下是伪数据
-      let response = [
-        {
-          id: "1",
-          name: "管理员",
-        },
-        {
-          id: "2",
-          name: "会员",
-        },
-        {
-          id: "3",
-          name: "游客",
-        },
-      ];
-
-      this.roleList = response;
+      let url = "/role/queryAll";
+      axios.post(url).then((response) => {
+        console.log(response.data);
+        if (response.data.flag) {
+          this.roleList = response.data.result;
+        } else {
+          this.$message.error(response.data.message);
+        }
+      });
     },
     //将查询条件置空
     handleRest() {
@@ -436,7 +429,7 @@ export default {
             email: this.addUser.email,
             password: this.addUser.password,
             remark: this.addUser.remark,
-            roleIds: this.addUser.roleIds
+            roleIds: this.addUser.roleIds,
             // roleIds: JSON.stringify(this.addUser.roleIds),
           };
           console.log(params);
@@ -522,7 +515,7 @@ export default {
           };
           console.log(params);
           axios.post(url, params).then((response) => {
-            if(response.data) {
+            if (response.data) {
               this.$message({
                 showClose: true,
                 message: response.data.message,
@@ -530,7 +523,6 @@ export default {
               });
               this.getUserList(); // 重新拉取用户列表
             }
-
           });
         })
         .catch(() => {
