@@ -488,7 +488,20 @@ export default {
     handleUpdateConfirm() {
       this.$refs["uptForm"].validate((valid) => {
         if (valid) {
+          // 校验通过
           //TODO:向后台发送请求修改用户和角色
+          let url = "/user/update";
+          axios.post(url, this.updateUser).then((response) => {
+            if (response.data) {
+              this.$message({
+                showClose: true,
+                message: response.data.message,
+                type: "success",
+              });
+              this.dialogUptFormVisible = false; // 添加用户窗口消失
+              this.getUserList();
+            }
+          });
         }
       });
     },
